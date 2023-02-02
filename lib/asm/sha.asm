@@ -52,7 +52,7 @@ init_asm proc export
 	lea rax, qword ptr[f_0]			; loading address of current procedure (f_0) to rax
 	vpbroadcastq ymm0, rax			; filling ymm0 register with address of current procedure | *f_0 | *f_0 | *f_0 | *f_0 |
 	loop_0:
-		vmovdqu ymmword ptr [rcx], ymm0	; copying proper procedure address to array as a vector (4 times at once)
+		vmovdqu ymmword ptr [rcx], ymm0	; copying proper procedure address to array as a vector (4 values at once)
 		add rcx, 32			; adding to f_0 procedure address number 32, which is size of ymm register in bytes,
                                         	; to address next memory place to fill
 
@@ -63,7 +63,7 @@ init_asm proc export
 	lea rax, qword ptr[f_1]			; loading address of current procedure (f_1) to rax
 	vpbroadcastq ymm0, rax              	; filling ymm0 register with address of current procedure | *f_1 | *f_1 | *f_1 | *f_1 |
 	loop_1:                                                                                                                    
-		vmovdqu ymmword ptr [rcx], ymm0	; copying proper procedure address to array as a vector (4 times at once)
+		vmovdqu ymmword ptr [rcx], ymm0	; copying proper procedure address to array as a vector (4 values at once)
 		add rcx, 32			; adding to f_0 procedure address number 32, which is size of ymm register in bytes,
 						; to address next memory place to fill
 
@@ -74,7 +74,7 @@ init_asm proc export
 	lea rax, qword ptr[f_2]			; loading address of current procedure (f_2) to rax
 	vpbroadcastq ymm0, rax                  ; filling ymm0 register with address of current procedure | *f_2 | *f_2 | *f_2 | *f_2 |
 	loop_2:                                                                                                                    
-		vmovdqu ymmword ptr [rcx], ymm0	; copying proper procedure address to array as a vector (4 times at once)
+		vmovdqu ymmword ptr [rcx], ymm0	; copying proper procedure address to array as a vector (4 values at once)
 		add rcx, 32			; adding to f_0 procedure address number 32, which is size of ymm register in bytes,
                                 	        ; to address next memory place to fill
 
@@ -85,7 +85,7 @@ init_asm proc export
 	lea rax, qword ptr[f_3]			; loading address of current procedure (f_3) to rax
 	vpbroadcastq ymm0, rax                  ; filling ymm0 register with address of current procedure | *f_3 | *f_3 | *f_3 | *f_3 |
 	loop_3:                                                                                                                    
-		vmovdqu ymmword ptr [rcx], ymm0 ; copying proper procedure address to array as a vector (4 times at once)
+		vmovdqu ymmword ptr [rcx], ymm0 ; copying proper procedure address to array as a vector (4 values at once)
 		add rcx, 32			; adding to f_0 procedure address number 32, which is size of ymm register in bytes,
                            	                ; to address next memory place to fill
 
