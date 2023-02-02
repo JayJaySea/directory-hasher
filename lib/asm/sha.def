@@ -1,0 +1,3 @@
+LIBRARY JAProjekt
+EXPORTS init_asm
+EXPORTS compute_buffer_values_asm

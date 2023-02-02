@@ -1,0 +1,8 @@
+C:\Users\Acer\Desktop\sha-1\lib\asm\hashes.txt: c6fb389a31eed44ffc392e7ab70d894371a7fde2
+C:\Users\Acer\Desktop\sha-1\lib\asm\make.bat: d41b2aed79d640248bc842575a913a9e0c6a92e5
+C:\Users\Acer\Desktop\sha-1\lib\asm\sha.def: 95e34519dd3e1db4e4c0cab12c5ee9d3f6ad5cc3
+C:\Users\Acer\Desktop\sha-1\lib\asm\sha.asm: 09fdb10a47efd7593491e61dab6a5c7269aed587
+C:\Users\Acer\Desktop\sha-1\lib\asm\sha.obj: 6b78520f09b8971c856b8397c06291579e43c125
+C:\Users\Acer\Desktop\sha-1\lib\asm\sha_asm.exp: 838883258439aebe9de03fc3c274caecaa6875fe
+C:\Users\Acer\Desktop\sha-1\lib\asm\sha_asm.lib: bb01b903aaed4341ab9e32c1e8aeb03d9a1fc72f
+C:\Users\Acer\Desktop\sha-1\lib\asm\sha_asm.dll: f2b152cf9ca7790cb8d5042a245b27383c67831e

@@ -1,0 +1,2 @@
+LIBRARY JAProjekt
+EXPORTS compute_buffer_values_c
