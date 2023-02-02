@@ -1,18 +1,46 @@
-; File with procedures to perform buffer calculation for sha-1 algorithm
+;
+; Library with procedures to perform buffer calculation for sha-1 algorithm
+; Author: Jacek Cytera
+; Version: 1.3
+;
 ; Exported procedures:
-; init_asm: Initializes array that is needed in calculations for following procedure
-; compute_buffer_values_asm: Calculates values of buffer
+; 	init_asm: Initializes array that is needed in calculations for following procedure
+;	compute_buffer_values_asm: Computes a, b, c, d, e buffer values for sha-1 algorithm
+; 
+; Version log:
+; 1.0 - made initial compute_buffer_values_asm procedure drafts
+; 1.1 - made naive implementation of sha-1 buffers calculation algorithm
+; 1.2 - added init_asm, which is needed for branchless solution
+; 1.3 - transformed compute_buffer_values_asm to use that solution (using array instead of jump instructions)
+
 .data
+	; four constants used for buffers calculation in sha-1 algorithm
 	k_0 dd 05A827999h
 	k_1 dd 06ED9EBA1h
 	k_2 dd 08F1BBCDCh
 	k_3 dd 0CA62C1D6h
 
+	; declaration of f array, later filled in init_asm with procedure addresses
 	f dq 80 dup (0)
 
 .code
 
-; no arguments or return value, just initializing array
+
+; This procedure initializes 80 quad word array for later calculations
+; Array is filled with addresses of f_n procedures:
+;
+; Indexes 0 to 19: address of f_0
+; Indexes 20 to 39: address of f_1
+; Indexes 40 to 69: address of f_2
+; Indexes 60 to 79: address of f_3
+; 
+; Later, in compute_buffer_values_asm, this array is used to easily
+; call f_n procedures from within loop
+;
+; It is vital to call this procedure before calling compute_buffer_values_asm.
+;
+; No arguments or return value
+; Does not destroy any registers
 init_asm proc export
 	push rdi
 	push rax
@@ -72,24 +100,32 @@ init_asm proc export
 	ret
 init_asm endp
 
+; This procedure calculates the values of buffers (a, b, c, d, e) for one iteration (processing of 512-bit chunk) of sha-1 algorithm
+; It needs a pointer to previously created array consisting of 80 word-sized values, and a pointer to an array of 5 double-word-sized values
+; (called later buffers array) that will store values calculated as the result of this part of algorithm.
+; 
 ; rcx - pointer to words array
-; rdx - pointer to buffers array (will be modified by this procedure)
+; rdx - pointer to buffers array (array will be modified by this procedure)
+;
+; No return value
+; Does not destroy any registers
 compute_buffer_values_asm proc export
-	push rbx				; saving previous values
+	push rbx				; saving previous register values
 	push rsi
 	push rdi
 	push rcx
 	push rdx
 	push r10
 
-	mov r10, rcx			; saving pointer to words array in r10
-	xor rdi, rdi				; this register will serve as loop counter
-	xor eax, eax				; cleaning up eax register
+	mov r10, rcx				; saving pointer to words array in r10
+	xor rdi, rdi				; settin loop counter to 0
+	xor eax, eax				; cleaning up eax register for later calculations
 	mov rsi, rdx
 	lea rdx, qword ptr [f]
 
 	main_loop:								; for(int i = 0; i < 80; i++)
 		call qword ptr [rdx + rdi*8]		; calling different functions for index in ranges 0..19, 20..39, 40..59, 60..79
+											; so that tmp = f[i]()
 
 		mov ebx, dword ptr [rsi]			; copying "a" to ebx
 		rol ebx, 5   						; rotating "a" left by 5
@@ -124,9 +160,17 @@ compute_buffer_values_asm proc export
 	pop rbx								; restoring rbx value
 	ret
 compute_buffer_values_asm endp
-; Following f_n procedures operate solely by modifying eax register
+
+
+; These procedures are pre-defined functions used in buffers calculations
+; Following f_n procedures operate solely by modifying eax register,
+;
+; They do not destroy any registers
+; Return value in eax
+;
+; return ((b&c) | ((~b)&d)) + k[0];
 f_0 proc
-	push rbx
+	push rbx						; saving rbx register value
 
 	mov eax, dword ptr [rsi + 4]	; eax = b
 	and eax, dword ptr [rsi + 8]	; eax = b&c
@@ -140,6 +184,7 @@ f_0 proc
 	ret
 f_0 endp
 
+; return (b^c^d) + k[1];
 f_1 proc
 	push rbx
 
@@ -152,8 +197,10 @@ f_1 proc
 	ret
 f_1 endp
 
+; return ((b&c) | (b&d) | (c&d)) + k[2];
 f_2 proc
 	push rbx
+
 	mov eax, dword ptr [rsi + 4]	; eax = b
 	and eax, dword ptr [rsi + 8]	; eax = b&c
 
@@ -172,6 +219,7 @@ f_2 proc
 	ret
 f_2 endp
 
+; return (b^c^d) + k[3];
 f_3 proc
 	push rbx
 
